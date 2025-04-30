@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import SkipListVisualization from "./SkipListVisualization";
 
@@ -366,7 +366,7 @@ export default function SkipListTransactionSystem() {
   };
   
   // Update transactions list based on filters
-  const updateTransactionsList = () => {
+  const updateTransactionsList = useCallback(() => {
     let filteredTransactions: Transaction[] = [];
     
     if (filterType !== "all" && filterPriority !== "all") {
@@ -382,12 +382,12 @@ export default function SkipListTransactionSystem() {
     }
     
     setTransactions(filteredTransactions);
-  };
+  }, [filterType, filterPriority, skipList]);
   
   // Update transactions when filters change
   useEffect(() => {
     updateTransactionsList();
-  }, [filterType, filterPriority, updateTransactionsList]);
+  }, [updateTransactionsList]);
   
   return (
     <div className="max-w-4xl mx-auto">

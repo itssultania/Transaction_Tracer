@@ -1,8 +1,17 @@
 import React from "react";
 import { TransactionType, TransactionPriority } from "./SkipListTransactionSystem";
 
+interface Transaction {
+  id: string;
+  amount: number;
+  description: string;
+  timestamp: number;
+  type: TransactionType;  
+  priority: TransactionPriority;
+}
+
 interface VisualizationProps {
-  transactions: any[];
+  transactions: Transaction[];
   selectedType: TransactionType | "all";
   selectedPriority: TransactionPriority | "all";
 }
