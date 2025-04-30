@@ -310,6 +310,11 @@ class SkipList {
 // Export these types for the visualization component
 export { TransactionType, TransactionPriority };
 
+interface VisualizationProps {
+  transactions: Transaction[];
+  selectedType: TransactionType | "all";
+  selectedPriority: TransactionPriority | "all";
+}
 
 export default function SkipListTransactionSystem() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -382,7 +387,7 @@ export default function SkipListTransactionSystem() {
   // Update transactions when filters change
   useEffect(() => {
     updateTransactionsList();
-  }, [filterType, filterPriority]);
+  }, [filterType, filterPriority, updateTransactionsList]);
   
   return (
     <div className="max-w-4xl mx-auto">
