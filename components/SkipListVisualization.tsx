@@ -1,14 +1,5 @@
 import React from "react";
-import { TransactionType, TransactionPriority } from "./SkipListTransactionSystem";
-
-interface Transaction {
-  id: string;
-  amount: number;
-  description: string;
-  timestamp: number;
-  type: TransactionType;  
-  priority: TransactionPriority;
-}
+import { TransactionType, TransactionPriority, Transaction } from "./SkipListTransactionSystem";
 
 interface VisualizationProps {
   transactions: Transaction[];
@@ -20,7 +11,7 @@ const SkipListVisualization: React.FC<VisualizationProps> = ({
   transactions, 
   selectedType, 
   selectedPriority 
-}) => {
+}: VisualizationProps) => {
   if (transactions.length === 0) {
     return <div className="text-center p-4">No transactions to visualize</div>;
   }

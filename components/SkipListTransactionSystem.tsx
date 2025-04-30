@@ -5,14 +5,15 @@ import { v4 as uuidv4 } from "uuid";
 import SkipListVisualization from "./SkipListVisualization";
 
 // Transaction types and priorities
-enum TransactionType {
+export enum TransactionType {
   PAYMENT = "payment",
   DEPOSIT = "deposit",
   WITHDRAWAL = "withdrawal",
   TRANSFER = "transfer"
 }
 
-enum TransactionPriority {
+
+export enum TransactionPriority {
   LOW = "low",
   MEDIUM = "medium",
   HIGH = "high",
@@ -308,13 +309,9 @@ class SkipList {
 }
 
 // Export these types for the visualization component
-export { TransactionType, TransactionPriority };
+export type {   Transaction};
 
-interface VisualizationProps {
-  transactions: Transaction[];
-  selectedType: TransactionType | "all";
-  selectedPriority: TransactionPriority | "all";
-}
+
 
 export default function SkipListTransactionSystem() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
