@@ -1,4 +1,3 @@
-import { useState } from "react";
 import SkipListTransactionSystem from "@/components/SkipListTransactionSystem";
 
 export default function Home() {
