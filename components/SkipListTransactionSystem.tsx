@@ -302,6 +302,21 @@ class SkipList {
     return null;
   }
   
+  // Search for a transaction by description
+  searchByDescription(query: string): Transaction[] {
+    const results: Transaction[] = [];
+    let current = this.head.forward[0];
+    
+    while (current !== null) {
+      if (current.transaction.description.toLowerCase().includes(query.toLowerCase())) {
+        results.push(current.transaction);
+      }
+      current = current.forward[0];
+    }
+    
+    return results;
+  }
+  
   // Get size of the skip list
   getSize(): number {
     return this.size;
@@ -320,8 +335,8 @@ export default function SkipListTransactionSystem() {
   const [description, setDescription] = useState<string>("");
   const [type, setType] = useState<TransactionType>(TransactionType.PAYMENT);
   const [priority, setPriority] = useState<TransactionPriority>(TransactionPriority.MEDIUM);
-  const [searchId, setSearchId] = useState<string>("");
-  const [searchResult, setSearchResult] = useState<Transaction | null>(null);
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<Transaction[]>([]);
   const [filterType, setFilterType] = useState<TransactionType | "all">("all");
   const [filterPriority, setFilterPriority] = useState<TransactionPriority | "all">("all");
   
@@ -348,18 +363,18 @@ export default function SkipListTransactionSystem() {
   const deleteTransaction = (id: string) => {
     if (skipList.delete(id)) {
       updateTransactionsList();
-      if (searchResult && searchResult.id === id) {
-        setSearchResult(null);
+      if (searchResults.some(tx => tx.id === id)) {
+        setSearchResults([]);
       }
     }
   };
   
-  // Search for a transaction
-  const searchTransaction = () => {
-    if (!searchId) return;
+  // Search for transactions
+  const searchTransactions = () => {
+    if (!searchText) return;
     
-    const result = skipList.search(searchId);
-    setSearchResult(result);
+    const results = skipList.searchByDescription(searchText);
+    setSearchResults(results);
   };
   
   // Update transactions list based on filters
@@ -435,32 +450,70 @@ export default function SkipListTransactionSystem() {
       </div>
       
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-bold mb-4">Search Transaction</h2>
+        <h2 className="text-xl font-bold mb-4">Search Transactions</h2>
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <input
             type="text"
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            placeholder="Transaction ID"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search by description"
             className="p-2 border rounded flex-1 dark:bg-gray-700 dark:border-gray-600"
           />
           <button
-            onClick={searchTransaction}
+            onClick={searchTransactions}
             className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
           >
             Search
           </button>
         </div>
         
-        {searchResult && (
-          <div className="mt-4 p-4 border rounded dark:border-gray-600">
-            <h3 className="font-bold">Search Result:</h3>
-            <p>ID: {searchResult.id}</p>
-            <p>Amount: ${searchResult.amount.toFixed(2)}</p>
-            <p>Description: {searchResult.description}</p>
-            <p>Type: {searchResult.type}</p>
-            <p>Priority: {searchResult.priority}</p>
-            <p>Date: {new Date(searchResult.timestamp).toLocaleString()}</p>
+        {searchResults.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-bold mb-2">Search Results ({searchResults.length}):</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="p-2 text-left">ID</th>
+                    <th className="p-2 text-left">Amount</th>
+                    <th className="p-2 text-left">Description</th>
+                    <th className="p-2 text-left">Type</th>
+                    <th className="p-2 text-left">Priority</th>
+                    <th className="p-2 text-left">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {searchResults.map((tx) => (
+                    <tr key={tx.id} className="border-b dark:border-gray-700">
+                      <td className="p-2 font-mono text-xs">{tx.id.substring(0, 8)}...</td>
+                      <td className="p-2">${tx.amount.toFixed(2)}</td>
+                      <td className="p-2">{tx.description}</td>
+                      <td className="p-2">
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          tx.type === TransactionType.PAYMENT ? 'bg-blue-100 text-blue-800' :
+                          tx.type === TransactionType.DEPOSIT ? 'bg-green-100 text-green-800' :
+                          tx.type === TransactionType.WITHDRAWAL ? 'bg-red-100 text-red-800' :
+                          'bg-purple-100 text-purple-800'
+                        }`}>
+                          {tx.type}
+                        </span>
+                      </td>
+                      <td className="p-2">
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          tx.priority === TransactionPriority.LOW ? 'bg-gray-100 text-gray-800' :
+                          tx.priority === TransactionPriority.MEDIUM ? 'bg-yellow-100 text-yellow-800' :
+                          tx.priority === TransactionPriority.HIGH ? 'bg-orange-100 text-orange-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {tx.priority}
+                        </span>
+                      </td>
+                      <td className="p-2">{new Date(tx.timestamp).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
