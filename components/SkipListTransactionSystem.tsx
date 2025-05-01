@@ -549,7 +549,12 @@ export default function SkipListTransactionSystem() {
               className="p-2 border rounded text-sm dark:bg-gray-700 dark:border-gray-600"
             >
               <option value="all">All Priorities</option>
-              {Object.values(TransactionPriority).map(p => (
+              {[
+                TransactionPriority.LOW, 
+                TransactionPriority.MEDIUM, 
+                TransactionPriority.HIGH, 
+                TransactionPriority.CRITICAL
+              ].map(p => (
                 <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>
               ))}
             </select>
