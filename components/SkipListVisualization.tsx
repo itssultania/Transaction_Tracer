@@ -10,7 +10,6 @@ interface VisualizationProps {
 const SkipListVisualization: React.FC<VisualizationProps> = ({ 
   transactions, 
   selectedType, 
-  selectedPriority 
 }) => {
   if (transactions.length === 0) {
     return <div className="text-center p-4">No transactions to visualize</div>;
